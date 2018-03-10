@@ -1,5 +1,6 @@
+package map;
+
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -10,8 +11,8 @@ import java.util.Set;
  * @Time: 17:00
  */
 public class SimpleHashMap<K,V> implements Map<K,V> {
-    private Node<K,V>[] nodes;
-    private final int length=10;
+    public MapNode<K,V>[] nodes;
+    private final int length=3;
     private int size;
     public SimpleHashMap() {
 
@@ -24,7 +25,7 @@ public class SimpleHashMap<K,V> implements Map<K,V> {
 
     @Override
     public boolean isEmpty() {
-        return false;
+        return size ==0;
     }
 
     @Override
@@ -39,31 +40,43 @@ public class SimpleHashMap<K,V> implements Map<K,V> {
 
     @Override
     public V get(Object key) {
+        int hash = key.hashCode();
+        int index =  hash % (length);
+        MapNode<K,V> node = nodes[index];
+        while (node.getHash()!=hash){
+            node = node.getNext();
+        }
+        if(node.getHash() == hash){
+            return node.getValue();
+        }
         return null;
     }
 
     @Override
     public V put(K key, V value) {
         int hash = key.hashCode();
-        int index =  hash % (length-1);
-        Node<K,V> currentNode = nodes[index];//TODO NULLPoint
-        Node<K,V> newNode = new Node<>(hash,key,value,null);
+        int index =  hash % (length);
+
+        MapNode<K,V> newNode = new MapNode<>(hash,key,value,null);
         if(nodes ==null){
-            this.nodes = (Node<K,V>[])new Node[length];
+            this.nodes = (MapNode<K,V>[])new MapNode[length];
         }
-        if(currentNode ==null){
-            currentNode = newNode;
+        if(nodes[index] ==null){
+            nodes[index] = newNode;
+            size++;
         }else{
-            for (;currentNode.hasNext();currentNode = currentNode.getNext()){
-                if(hash == currentNode.getHash()){
-                    currentNode = newNode;
+            MapNode<K,V> last= nodes[index];
+            while (true){
+                if(newNode.getHash() == last.getHash()){
+                    last = newNode;
                     break;
+                }
+                if(last.hasNext()){
+                    last = last.getNext();
                 }else{
-                    if(!currentNode.hasNext()){
-                        currentNode.setNext(newNode);
-                        size ++;
-                        break;
-                    }
+                    last.setNext(newNode);
+                    size++;
+                    break;
                 }
             }
         }
@@ -102,8 +115,15 @@ public class SimpleHashMap<K,V> implements Map<K,V> {
 
     public static void main(String[] args) {
         SimpleHashMap<String,Object> smap = new SimpleHashMap<>();
-        smap.put("123",1);
-        System.out.println(smap.size);
+        smap.put(String.valueOf(1),"A");
+        smap.put(String.valueOf(1),"123");
+        smap.put(String.valueOf(2),"231");
+        smap.put(String.valueOf(2),"A23");
+        smap.put(String.valueOf(3),"A2");
+        smap.put(String.valueOf(4),"A2");
+        smap.put(String.valueOf(5),"A1");
+        smap.put(String.valueOf(6),"A2");
+        System.out.println(smap.get("3"));
     }
 
 }

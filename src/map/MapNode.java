@@ -1,4 +1,4 @@
-import java.util.HashMap;
+package map;
 
 /**
  * @Created with IntelliJ IDEA.
@@ -6,15 +6,15 @@ import java.util.HashMap;
  * @Date: 2018/3/9
  * @Time: 17:06
  */
-public class Node<K,V> {
+public class MapNode<K,V> {
     private K key;
-    private V item;
-    private Node next;
+    private V value;
+    private MapNode next;
     private int hash;
 
-    public Node(int hash,K key, V item, Node<K,V> next) {
+    public MapNode(int hash, K key, V value, MapNode<K,V> next) {
         this.key = key;
-        this.item = item;
+        this.value = value;
         this.next = next;
         this.hash = hash;
     }
@@ -27,12 +27,12 @@ public class Node<K,V> {
         this.key = key;
     }
 
-    public V getItem() {
-        return item;
+    public V getValue() {
+        return value;
     }
 
-    public void setItem(V item) {
-        this.item = item;
+    public void setValue(V value) {
+        this.value = value;
     }
 
     public int getHash() {
@@ -43,11 +43,11 @@ public class Node<K,V> {
         this.hash = hash;
     }
 
-    public Node getNext() {
+    public MapNode getNext() {
         return next;
     }
 
-    public void setNext(Node next) {
+    public void setNext(MapNode next) {
         this.next = next;
     }
 
