@@ -30,7 +30,18 @@ public class SimpleHashMap<K,V> implements Map<K,V> {
 
     @Override
     public boolean containsKey(Object key) {
-        return false;
+        int hash = key.hashCode();
+        int index =  hash % (length);
+        MapNode<K,V> node = nodes[index];
+        while (true){
+            if(node == null){
+                return false;
+            }
+            if(node.getHash() == hash){
+                return true;
+            }
+            node = node.getNext();
+        }
     }
 
     @Override
@@ -43,20 +54,21 @@ public class SimpleHashMap<K,V> implements Map<K,V> {
         int hash = key.hashCode();
         int index =  hash % (length);
         MapNode<K,V> node = nodes[index];
-        while (node.getHash()!=hash){
+        while (true){
+            if(node == null){
+                return null;
+            }
+            if(node.getHash() == hash){
+                return node.getValue();
+            }
             node = node.getNext();
         }
-        if(node.getHash() == hash){
-            return node.getValue();
-        }
-        return null;
     }
 
     @Override
     public V put(K key, V value) {
         int hash = key.hashCode();
         int index =  hash % (length);
-
         MapNode<K,V> newNode = new MapNode<>(hash,key,value,null);
         if(nodes ==null){
             this.nodes = (MapNode<K,V>[])new MapNode[length];
@@ -68,7 +80,7 @@ public class SimpleHashMap<K,V> implements Map<K,V> {
             MapNode<K,V> last= nodes[index];
             while (true){
                 if(newNode.getHash() == last.getHash()){
-                    last = newNode;
+                    nodes[index] = newNode;
                     break;
                 }
                 if(last.hasNext()){
@@ -124,6 +136,9 @@ public class SimpleHashMap<K,V> implements Map<K,V> {
         smap.put(String.valueOf(5),"A1");
         smap.put(String.valueOf(6),"A2");
         System.out.println(smap.get("3"));
+        System.out.println(smap.get("1"));
+        System.out.println(smap.get("6"));
+        System.out.println(smap.containsKey("6"));
     }
 
 }
